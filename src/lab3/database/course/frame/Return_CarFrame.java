@@ -34,6 +34,9 @@ public class Return_CarFrame extends JFrame{
 
     private JButton return_BookButton;
 
+    private JTextField updatetextField;
+    private JButton updateButton;
+
     public Return_CarFrame() {
         setResizable(false);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -57,7 +60,6 @@ public class Return_CarFrame extends JFrame{
         JButton self_info_Button = new JButton("还车");
         self_info_Button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-
                 Return_CarFrame return_carFrame = new Return_CarFrame();
                 return_carFrame.setVisible(true);
                 CloseFrame();
@@ -82,35 +84,50 @@ public class Return_CarFrame extends JFrame{
         contentPane.add(layeredPane);
 
         idCustomerLabel = new JLabel("卡号");
-        idCustomerLabel.setFont(new Font("宋体", Font.PLAIN, 30));
-        idCustomerLabel.setBounds(311, 102, 158, 43);
+        idCustomerLabel.setFont(new Font("宋体", Font.PLAIN, 25));
+        idCustomerLabel.setBounds(241, 102, 158, 30);
         layeredPane.add(idCustomerLabel);
 
         nameCustomerLabel = new JLabel("姓名");
-        nameCustomerLabel.setFont(new Font("宋体", Font.PLAIN, 30));
-        nameCustomerLabel.setBounds(241, 171, 81, 32);
+        nameCustomerLabel.setFont(new Font("宋体", Font.PLAIN, 25));
+        nameCustomerLabel.setBounds(241, 142, 81, 32);
         layeredPane.add(nameCustomerLabel);
 
         passwordLabel = new JLabel("密码");
-        passwordLabel.setFont(new Font("宋体", Font.PLAIN, 30));
-        passwordLabel.setBounds(241, 218, 81, 38);
+        passwordLabel.setFont(new Font("宋体", Font.PLAIN, 25));
+        passwordLabel.setBounds(241, 172, 81, 38);
         layeredPane.add(passwordLabel);
 
         showidCustomerLabel = new JLabel();
-        showidCustomerLabel.setFont(new Font("宋体", Font.PLAIN, 30));
-        showidCustomerLabel.setBounds(491, 102, 146, 43);
+        showidCustomerLabel.setFont(new Font("宋体", Font.PLAIN, 25));
+        showidCustomerLabel.setBounds(348, 102, 146, 43);
         layeredPane.add(showidCustomerLabel);
         showidCustomerLabel.setText(LoginFrame.userID);
 
         showNameCustomerLabel = new JLabel("");
-        showNameCustomerLabel.setFont(new Font("宋体", Font.PLAIN, 30));
-        showNameCustomerLabel.setBounds(348, 171, 144, 32);
+        showNameCustomerLabel.setFont(new Font("宋体", Font.PLAIN, 25));
+        showNameCustomerLabel.setBounds(348, 142, 144, 32);
         layeredPane.add(showNameCustomerLabel);
 
         showPasswordLabel = new JLabel("");
-        showPasswordLabel.setFont(new Font("宋体", Font.PLAIN, 30));
-        showPasswordLabel.setBounds(348, 218, 144, 32);
+        showPasswordLabel.setFont(new Font("宋体", Font.PLAIN, 25));
+        showPasswordLabel.setBounds(348, 172, 144, 32);
         layeredPane.add(showPasswordLabel);
+
+        updatetextField = new JTextField();
+        updatetextField.setFont(new Font("宋体", Font.PLAIN, 18));
+        updatetextField.setBounds(300, 280, 492, 35);
+        contentPane.add(updatetextField);
+        updatetextField.setColumns(10);
+
+        updateButton = new JButton(new ImageIcon("image/update.jpg"));
+        updateButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                do_update_car();
+            }
+        });
+        updateButton.setBounds(838, 280, 97, 35);
+        contentPane.add(updateButton);
 
         carScrollPane = new JScrollPane(carJtable);
         carScrollPane.setBounds(197, 271, 576, 249);
@@ -131,6 +148,27 @@ public class Return_CarFrame extends JFrame{
         JLabel background1 = new JLabel(new ImageIcon("image/background2.jpg"));
         background1.setBounds(0, 0, 990, 659);
         contentPane.add(background1);
+    }
+
+    private void do_update_car(){
+        row = carJtable.getSelectedRow();
+        row = carJtable.getSelectedRow();
+        if (row == -1) {
+            JOptionPane.showMessageDialog(this, "请选择车辆", "", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        String carID = carJtable.getValueAt(row, 0).toString();
+        BorrowTools borrowtools = new BorrowTools();
+        int i = borrowtools.UpdateCar(carID,updatetextField.getText());
+        if (i == 1) {
+            JOptionPane.showMessageDialog(this, "更新成功", "", JOptionPane.WARNING_MESSAGE);
+            show_data();
+            return;
+        } else {
+            JOptionPane.showMessageDialog(this, "更新失败", "", JOptionPane.WARNING_MESSAGE);
+            show_data();
+            return;
+        }
     }
 
     private void do_return_car() {
@@ -162,7 +200,7 @@ public class Return_CarFrame extends JFrame{
 
         defaultModel = (DefaultTableModel) carJtable.getModel();
         defaultModel.setRowCount(0);
-        defaultModel.setColumnIdentifiers(new Object[] { "编号", "车名", "押金", "租金"});
+        defaultModel.setColumnIdentifiers(new Object[] { "编号", "车名", "押金", "租金","车辆使用情况"});
         carJtable.getTableHeader().setReorderingAllowed(false);
         carJtable.setModel(defaultModel);
 
@@ -170,6 +208,7 @@ public class Return_CarFrame extends JFrame{
         carJtable.getColumnModel().getColumn(1).setPreferredWidth(80);
         carJtable.getColumnModel().getColumn(2).setPreferredWidth(20);
         carJtable.getColumnModel().getColumn(3).setPreferredWidth(20);
+        carJtable.getColumnModel().getColumn(4).setPreferredWidth(80);
 
         CustomerTools customerTools = new CustomerTools();
         Customer customer = new Customer();
@@ -197,8 +236,9 @@ public class Return_CarFrame extends JFrame{
             }
             for (Iterator<Car> iterator = carList.iterator(); iterator.hasNext();) {
                 Car temp = (Car) iterator.next();
+                String condition = borrowtools.getCondition(temp.getCarID());
                 defaultModel.addRow(new Object[] { temp.getCarID(), temp.getCarName(), temp.getCarPrice() + "元",
-                        temp.getBorrowPrice() + "元" });
+                        temp.getBorrowPrice() + "元",condition });
             }
         }
         carScrollPane.setViewportView(carJtable);

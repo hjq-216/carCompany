@@ -122,4 +122,43 @@ public class BorrowTools {
         }
         return i;
     }
+
+    public String getCondition(String carID){
+        String sql="select carCondition from borrow where carID='" + carID + "'";
+        DatabaseTools db = new DatabaseTools();
+        Connection conn = db.getConn();
+        ResultSet rs=null;
+        String condition="";
+        try {
+            PreparedStatement st =conn.prepareStatement(sql);
+            rs=st.executeQuery(sql);
+            while(rs.next()){
+                condition = rs.getString("carCondition");
+            }
+            rs.close();
+            st.close();
+            conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return condition;
+    }
+
+    public int UpdateCar(String carID,String carCondition){
+        int i=0;
+        String sql="update borrow set carCondition =? where carID=?";
+        DatabaseTools db = new DatabaseTools();
+        Connection conn = db.getConn();
+        try {
+            PreparedStatement st = conn.prepareStatement(sql);
+            st.setString(1,carCondition);
+            st.setString(2,carID);
+            i=st.executeUpdate();
+            st.close();
+            conn.close();
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return i;
+    }
 }

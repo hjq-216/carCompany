@@ -8,18 +8,31 @@ import lab3.database.course.sqltools.MoneyTools;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.Iterator;
 import java.util.List;
 
-public class Money_ShowFrame extends JFrame {
+public class Money_ShowFrame extends JFrame implements ItemListener {
     private static final long serialVersionUID = 1L;
     private JPanel contentPane;
     private JScrollPane moneyScrollPane;
     public JTable customerJtable;
     private DefaultTableModel defaultModel;
     public int row;
+    private JTextField searchtextField;
+    private JButton searchButton;
+
+    private String searchType = "none";
+    private JRadioButton noneButton;
+    private JRadioButton dayButton;
+    private JRadioButton monthButton;
+    private JRadioButton yearButton;
+    private ButtonGroup group;
+
 
     public Money_ShowFrame()
     {
@@ -109,8 +122,85 @@ public class Money_ShowFrame extends JFrame {
         contentPane.add(log_out_Button);
 
         moneyScrollPane = new JScrollPane();
-        moneyScrollPane.setBounds(302, 197, 611, 381);
+        moneyScrollPane.setBounds(293, 253, 611, 381);
         contentPane.add(moneyScrollPane);
+
+//        searchtextField = new JTextField();
+//        searchtextField.setFont(new Font("宋体", Font.PLAIN, 18));
+//        searchtextField.setBounds(300, 166, 492, 35);
+//        contentPane.add(searchtextField);
+//        searchtextField.setColumns(10);
+//
+//        searchButton = new JButton(new ImageIcon("image/search.jpg"));
+//        searchButton.addActionListener(new ActionListener() {
+//            public void actionPerformed(ActionEvent e) {
+//                do_search_money();
+//            }
+//        });
+//        searchButton.setBounds(838, 166, 97, 35);
+//        contentPane.add(searchButton);
+
+        noneButton = new JRadioButton("无");
+        noneButton.setFont(new Font("宋体", Font.PLAIN, 18));
+        noneButton.setBounds(346, 213, 100, 29);
+        contentPane.add(noneButton);
+        noneButton.setSelected(true);
+        noneButton.addItemListener(this);
+        noneButton.setContentAreaFilled(false);
+        noneButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                show_data();
+            }
+        });
+
+        dayButton = new JRadioButton("最近7天");
+        dayButton.setFont(new Font("宋体", Font.PLAIN, 18));
+        dayButton.setBackground(UIManager.getColor("Button.disabledShadow"));
+        dayButton.setBounds(446, 213, 150, 29);
+        contentPane.add(dayButton);
+        dayButton.addItemListener(this);
+        dayButton.setContentAreaFilled(false);
+        dayButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                show_data();
+            }
+        });
+
+        monthButton = new JRadioButton("最近一个月");
+        monthButton.setFont(new Font("宋体", Font.PLAIN, 12));
+        monthButton.setBackground(UIManager.getColor("Button.disabledShadow"));
+        monthButton.setBounds(596, 213, 120, 29);
+        contentPane.add(monthButton);
+        monthButton.addItemListener(this);
+        monthButton.setContentAreaFilled(false);
+        monthButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                show_data();
+            }
+        });
+
+        yearButton = new JRadioButton("最近一年");
+        yearButton.setFont(new Font("宋体", Font.PLAIN, 18));
+        yearButton.setBackground(UIManager.getColor("Button.disabledShadow"));
+        yearButton.setBounds(746, 213, 177, 29);
+        contentPane.add(yearButton);
+        yearButton.addItemListener(this);
+        yearButton.setContentAreaFilled(false);
+        yearButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                show_data();
+            }
+        });
+
+        group = new ButtonGroup();
+        group.add(noneButton);
+        group.add(dayButton);
+        group.add(monthButton);
+        group.add(yearButton);
 
         show_data();
 
@@ -121,41 +211,159 @@ public class Money_ShowFrame extends JFrame {
 
     private void show_data()
     {
-        customerJtable = new JTable();
-        customerJtable.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
-        customerJtable.setRowHeight(54);
+        if ("none".equals(searchType)){
+            customerJtable = new JTable();
+            customerJtable.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
+            customerJtable.setRowHeight(54);
 
-        defaultModel = (DefaultTableModel) customerJtable.getModel();
-        defaultModel.setRowCount(0);
-        defaultModel.setColumnIdentifiers(new Object[] { "记录ID","用户卡号","会员等级","车辆编号","收支时间","收支明细","退还押金","租金","押金"});
+            defaultModel = (DefaultTableModel) customerJtable.getModel();
+            defaultModel.setRowCount(0);
+            defaultModel.setColumnIdentifiers(new Object[] { "记录ID","用户卡号","会员等级","车辆编号","收支时间","收支明细","退还押金","租金","押金"});
 
-        customerJtable.getTableHeader().setReorderingAllowed(false);
-        customerJtable.setModel(defaultModel);
+            customerJtable.getTableHeader().setReorderingAllowed(false);
+            customerJtable.setModel(defaultModel);
 
-        customerJtable.getColumnModel().getColumn(0).setPreferredWidth(5);
-        customerJtable.getColumnModel().getColumn(1).setPreferredWidth(10);
-        customerJtable.getColumnModel().getColumn(2).setPreferredWidth(5);
-        customerJtable.getColumnModel().getColumn(3).setPreferredWidth(10);
-        customerJtable.getColumnModel().getColumn(4).setPreferredWidth(80);
-        customerJtable.getColumnModel().getColumn(5).setPreferredWidth(80);
-        customerJtable.getColumnModel().getColumn(6).setPreferredWidth(15);
-        customerJtable.getColumnModel().getColumn(7).setPreferredWidth(15);
-        customerJtable.getColumnModel().getColumn(8).setPreferredWidth(15);
+            customerJtable.getColumnModel().getColumn(0).setPreferredWidth(5);
+            customerJtable.getColumnModel().getColumn(1).setPreferredWidth(10);
+            customerJtable.getColumnModel().getColumn(2).setPreferredWidth(5);
+            customerJtable.getColumnModel().getColumn(3).setPreferredWidth(10);
+            customerJtable.getColumnModel().getColumn(4).setPreferredWidth(80);
+            customerJtable.getColumnModel().getColumn(5).setPreferredWidth(80);
+            customerJtable.getColumnModel().getColumn(6).setPreferredWidth(15);
+            customerJtable.getColumnModel().getColumn(7).setPreferredWidth(15);
+            customerJtable.getColumnModel().getColumn(8).setPreferredWidth(15);
 
-        MoneyTools moneyTools = new MoneyTools();
-        CustomerLevelTools customerLevelTools = new CustomerLevelTools();
-        List<Money> moneyList = moneyTools.moneyData();
+            MoneyTools moneyTools = new MoneyTools();
+            CustomerLevelTools customerLevelTools = new CustomerLevelTools();
+            List<Money> moneyList = moneyTools.moneyData();
 
-        for (Iterator<Money> iterator = moneyList.iterator(); iterator.hasNext();) {
-            Money temp = (Money) iterator.next();
-            CustomerLevel level = customerLevelTools.levelData(temp.getUserID());
-            defaultModel.addRow(new Object[] {temp.getMoneyID(), temp.getUserID(),level.getUserLevel(),temp.getCarID(),
-            temp.getMoneyTime(),temp.getMoneyDetail(),temp.getMoneyback(),temp.getPrice(),temp.getBack()});
+            for (Iterator<Money> iterator = moneyList.iterator(); iterator.hasNext();) {
+                Money temp = (Money) iterator.next();
+                CustomerLevel level = customerLevelTools.levelData(temp.getUserID());
+                defaultModel.addRow(new Object[] {temp.getMoneyID(), temp.getUserID(),level.getUserLevel(),temp.getCarID(),
+                        temp.getMoneyTime(),temp.getMoneyDetail(),temp.getMoneyback(),temp.getPrice(),temp.getBack()});
+            }
+            moneyScrollPane.setViewportView(customerJtable);
         }
-        moneyScrollPane.setViewportView(customerJtable);
+        if ("day".equals(searchType)){
+            customerJtable = new JTable();
+            customerJtable.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
+            customerJtable.setRowHeight(54);
+
+            defaultModel = (DefaultTableModel) customerJtable.getModel();
+            defaultModel.setRowCount(0);
+            defaultModel.setColumnIdentifiers(new Object[] { "记录ID","用户卡号","会员等级","车辆编号","收支时间","收支明细","退还押金","租金","押金"});
+
+            customerJtable.getTableHeader().setReorderingAllowed(false);
+            customerJtable.setModel(defaultModel);
+
+            customerJtable.getColumnModel().getColumn(0).setPreferredWidth(5);
+            customerJtable.getColumnModel().getColumn(1).setPreferredWidth(10);
+            customerJtable.getColumnModel().getColumn(2).setPreferredWidth(5);
+            customerJtable.getColumnModel().getColumn(3).setPreferredWidth(10);
+            customerJtable.getColumnModel().getColumn(4).setPreferredWidth(80);
+            customerJtable.getColumnModel().getColumn(5).setPreferredWidth(80);
+            customerJtable.getColumnModel().getColumn(6).setPreferredWidth(15);
+            customerJtable.getColumnModel().getColumn(7).setPreferredWidth(15);
+            customerJtable.getColumnModel().getColumn(8).setPreferredWidth(15);
+
+            MoneyTools moneyTools = new MoneyTools();
+            CustomerLevelTools customerLevelTools = new CustomerLevelTools();
+            List<Money> moneyList = moneyTools.money7Day();
+
+            for (Iterator<Money> iterator = moneyList.iterator(); iterator.hasNext();) {
+                Money temp = (Money) iterator.next();
+                CustomerLevel level = customerLevelTools.levelData(temp.getUserID());
+                defaultModel.addRow(new Object[] {temp.getMoneyID(), temp.getUserID(),level.getUserLevel(),temp.getCarID(),
+                        temp.getMoneyTime(),temp.getMoneyDetail(),temp.getMoneyback(),temp.getPrice(),temp.getBack()});
+            }
+            moneyScrollPane.setViewportView(customerJtable);
+        }
+
+        if ("month".equals(searchType)){
+            customerJtable = new JTable();
+            customerJtable.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
+            customerJtable.setRowHeight(54);
+
+            defaultModel = (DefaultTableModel) customerJtable.getModel();
+            defaultModel.setRowCount(0);
+            defaultModel.setColumnIdentifiers(new Object[] { "记录ID","用户卡号","会员等级","车辆编号","收支时间","收支明细","退还押金","租金","押金"});
+
+            customerJtable.getTableHeader().setReorderingAllowed(false);
+            customerJtable.setModel(defaultModel);
+
+            customerJtable.getColumnModel().getColumn(0).setPreferredWidth(5);
+            customerJtable.getColumnModel().getColumn(1).setPreferredWidth(10);
+            customerJtable.getColumnModel().getColumn(2).setPreferredWidth(5);
+            customerJtable.getColumnModel().getColumn(3).setPreferredWidth(10);
+            customerJtable.getColumnModel().getColumn(4).setPreferredWidth(80);
+            customerJtable.getColumnModel().getColumn(5).setPreferredWidth(80);
+            customerJtable.getColumnModel().getColumn(6).setPreferredWidth(15);
+            customerJtable.getColumnModel().getColumn(7).setPreferredWidth(15);
+            customerJtable.getColumnModel().getColumn(8).setPreferredWidth(15);
+
+            MoneyTools moneyTools = new MoneyTools();
+            CustomerLevelTools customerLevelTools = new CustomerLevelTools();
+            List<Money> moneyList = moneyTools.moneyMonth();
+
+            for (Iterator<Money> iterator = moneyList.iterator(); iterator.hasNext();) {
+                Money temp = (Money) iterator.next();
+                CustomerLevel level = customerLevelTools.levelData(temp.getUserID());
+                defaultModel.addRow(new Object[] {temp.getMoneyID(), temp.getUserID(),level.getUserLevel(),temp.getCarID(),
+                        temp.getMoneyTime(),temp.getMoneyDetail(),temp.getMoneyback(),temp.getPrice(),temp.getBack()});
+            }
+            moneyScrollPane.setViewportView(customerJtable);
+        }
+
+        if ("year".equals(searchType)){
+            customerJtable = new JTable();
+            customerJtable.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
+            customerJtable.setRowHeight(54);
+
+            defaultModel = (DefaultTableModel) customerJtable.getModel();
+            defaultModel.setRowCount(0);
+            defaultModel.setColumnIdentifiers(new Object[] { "记录ID","用户卡号","会员等级","车辆编号","收支时间","收支明细","退还押金","租金","押金"});
+
+            customerJtable.getTableHeader().setReorderingAllowed(false);
+            customerJtable.setModel(defaultModel);
+
+            customerJtable.getColumnModel().getColumn(0).setPreferredWidth(5);
+            customerJtable.getColumnModel().getColumn(1).setPreferredWidth(10);
+            customerJtable.getColumnModel().getColumn(2).setPreferredWidth(5);
+            customerJtable.getColumnModel().getColumn(3).setPreferredWidth(10);
+            customerJtable.getColumnModel().getColumn(4).setPreferredWidth(80);
+            customerJtable.getColumnModel().getColumn(5).setPreferredWidth(80);
+            customerJtable.getColumnModel().getColumn(6).setPreferredWidth(15);
+            customerJtable.getColumnModel().getColumn(7).setPreferredWidth(15);
+            customerJtable.getColumnModel().getColumn(8).setPreferredWidth(15);
+
+            MoneyTools moneyTools = new MoneyTools();
+            CustomerLevelTools customerLevelTools = new CustomerLevelTools();
+            List<Money> moneyList = moneyTools.moneyYear();
+
+            for (Iterator<Money> iterator = moneyList.iterator(); iterator.hasNext();) {
+                Money temp = (Money) iterator.next();
+                CustomerLevel level = customerLevelTools.levelData(temp.getUserID());
+                defaultModel.addRow(new Object[] {temp.getMoneyID(), temp.getUserID(),level.getUserLevel(),temp.getCarID(),
+                        temp.getMoneyTime(),temp.getMoneyDetail(),temp.getMoneyback(),temp.getPrice(),temp.getBack()});
+            }
+            moneyScrollPane.setViewportView(customerJtable);
+        }
     }
 
     public void CloseFrame() {
         super.dispose();
+    }
+
+    @Override
+    public void itemStateChanged(ItemEvent e) {
+        if (noneButton.isSelected())
+            searchType = "none";
+        if (dayButton.isSelected())
+            searchType = "day";
+        if (monthButton.isSelected())
+            searchType = "month";
+        if (yearButton.isSelected())
+            searchType = "year";
     }
 }
