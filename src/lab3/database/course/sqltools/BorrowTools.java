@@ -1,5 +1,6 @@
 package lab3.database.course.sqltools;
 
+import lab3.database.course.dao.Borrow;
 import lab3.database.course.dao.Car;
 import lab3.database.course.database.DatabaseTools;
 
@@ -160,5 +161,33 @@ public class BorrowTools {
             e.printStackTrace();
         }
         return i;
+    }
+
+    public List<Borrow> getUsingCar(String userID){
+        String sql="select * from borrow where userID='" + userID + "'";
+        DatabaseTools db = new DatabaseTools();
+        Connection conn = db.getConn();
+        ResultSet rs=null;
+        List<Borrow> ls=new ArrayList<Borrow>();
+        try {
+            PreparedStatement st =conn.prepareStatement(sql);
+            rs=st.executeQuery(sql);
+            while(rs.next()){
+                Borrow borrow=new Borrow();
+                borrow.setUserID(rs.getString("userID"));
+                borrow.setCarID(rs.getString("carID"));
+                borrow.setCarCondition(rs.getString("carCondition"));
+                borrow.setBorrowTime(rs.getTimestamp("borrowTime"));
+                borrow.setDueTime(rs.getTimestamp("dueTime"));
+                borrow.setOverTime(rs.getString("overTime"));
+                ls.add(borrow);
+            }
+            rs.close();
+            st.close();
+            conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return ls;
     }
 }

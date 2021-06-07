@@ -28,5 +28,39 @@
         <jarDirectory url="file://$USER_HOME$/Desktop/mysql-connector-java-8.0.19" recursive="false" />
       </library>
     </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="file://$USER_HOME$/Desktop/jfreechart-1.0.19" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$USER_HOME$/Desktop/jfreechart-1.0.19/experimental" />
+          <root url="file://$USER_HOME$/Desktop/jfreechart-1.0.19/source" />
+          <root url="file://$USER_HOME$/Desktop/jfreechart-1.0.19/swt" />
+          <root url="file://$USER_HOME$/Desktop/jfreechart-1.0.19/tests" />
+        </SOURCES>
+        <jarDirectory url="file://$USER_HOME$/Desktop/jfreechart-1.0.19" recursive="false" />
+      </library>
+    </orderEntry>
+    <orderEntry type="library" name="Java EE 6-Java EE 6" level="project" />
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$USER_HOME$/Desktop/jfreechart-1.0.19/lib/jcommon-1.0.23.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$USER_HOME$/Desktop/jfreechart-1.0.19/lib/jfreechart-1.0.19.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>

@@ -4,6 +4,14 @@ import lab3.database.course.dao.CustomerLevel;
 import lab3.database.course.dao.Money;
 import lab3.database.course.sqltools.CustomerLevelTools;
 import lab3.database.course.sqltools.MoneyTools;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartFrame;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.StandardChartTheme;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.category.CategoryDataset;
+import org.jfree.data.category.DefaultCategoryDataset;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -13,7 +21,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
 
 public class Money_ShowFrame extends JFrame implements ItemListener {
@@ -24,7 +32,7 @@ public class Money_ShowFrame extends JFrame implements ItemListener {
     private DefaultTableModel defaultModel;
     public int row;
     private JTextField searchtextField;
-    private JButton searchButton;
+    private JButton generateYearButton;
 
     private String searchType = "none";
     private JRadioButton noneButton;
@@ -131,14 +139,14 @@ public class Money_ShowFrame extends JFrame implements ItemListener {
 //        contentPane.add(searchtextField);
 //        searchtextField.setColumns(10);
 //
-//        searchButton = new JButton(new ImageIcon("image/search.jpg"));
-//        searchButton.addActionListener(new ActionListener() {
-//            public void actionPerformed(ActionEvent e) {
-//                do_search_money();
-//            }
-//        });
-//        searchButton.setBounds(838, 166, 97, 35);
-//        contentPane.add(searchButton);
+        generateYearButton = new JButton(new ImageIcon("image/generate.png"));
+        generateYearButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                do_generate_year();
+            }
+        });
+        generateYearButton.setBounds(346, 166, 129, 44);
+        contentPane.add(generateYearButton);
 
         noneButton = new JRadioButton("无");
         noneButton.setFont(new Font("宋体", Font.PLAIN, 18));
@@ -350,6 +358,54 @@ public class Money_ShowFrame extends JFrame implements ItemListener {
             moneyScrollPane.setViewportView(customerJtable);
         }
     }
+
+    private void do_generate_year(){
+        StandardChartTheme mChartTheme = new StandardChartTheme("CN");
+        mChartTheme.setLargeFont(new Font("黑体", Font.BOLD, 20));
+        mChartTheme.setExtraLargeFont(new Font("宋体", Font.PLAIN, 15));
+        mChartTheme.setRegularFont(new Font("宋体", Font.PLAIN, 15));
+        ChartFactory.setChartTheme(mChartTheme);
+        CategoryDataset mDataset = GetDatasetYear();
+        JFreeChart mChart = ChartFactory.createLineChart(
+                "公司年度报表",//图名字
+                "年份",//横坐标
+                "收入",//纵坐标
+                mDataset,//数据集
+                PlotOrientation.VERTICAL,
+                true, // 显示图例
+                true, // 采用标准生成器
+                false);// 是否生成超链接
+
+        CategoryPlot mPlot = (CategoryPlot)mChart.getPlot();
+        mPlot.setBackgroundPaint(Color.LIGHT_GRAY);
+        mPlot.setRangeGridlinePaint(Color.BLUE);//背景底部横虚线
+        mPlot.setOutlinePaint(Color.RED);//边界线
+
+        ChartFrame mChartFrame = new ChartFrame("公司年度报表", mChart);
+        mChartFrame.pack();
+        mChartFrame.setVisible(true);
+    }
+
+    private CategoryDataset GetDatasetYear() {
+        HashMap<String,String> yearMap = new HashMap<>();
+        MoneyTools moneyTools = new MoneyTools();
+        List<Money> moneyList = moneyTools.moneyData();
+        for(Money money:moneyList){
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(money.getMoneyTime());
+            double moneyDetail = Double.parseDouble(money.getMoneyDetail().replace("+",""));
+            yearMap.put(String.valueOf(calendar.get(Calendar.YEAR)),
+                    String.valueOf(Double.parseDouble(yearMap.getOrDefault(String.valueOf(calendar.get(Calendar.YEAR)),"0"))+moneyDetail));
+        }
+        DefaultCategoryDataset mDataset = new DefaultCategoryDataset();
+        var yearArray = yearMap.keySet().toArray();
+        Arrays.sort(yearArray);
+        for (Object key:yearArray){
+            mDataset.addValue(Double.parseDouble(yearMap.get((String) key)),"year", (String) key);
+        }
+        return mDataset;
+    }
+
 
     public void CloseFrame() {
         super.dispose();

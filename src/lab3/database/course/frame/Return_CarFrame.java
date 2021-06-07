@@ -57,6 +57,18 @@ public class Return_CarFrame extends JFrame{
         borrow_Button.setBounds(77, 288, 123, 29);
         contentPane.add(borrow_Button);
 
+        JButton history_Button = new JButton("租借历史");
+        history_Button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                History_CustomerFrame history_customerFrame = new History_CustomerFrame();
+                history_customerFrame.setVisible(true);
+                CloseFrame();
+            }
+        });
+        history_Button.setBounds(77,380,123,29);
+        contentPane.add(history_Button);
+
         JButton self_info_Button = new JButton("还车");
         self_info_Button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -179,8 +191,8 @@ public class Return_CarFrame extends JFrame{
             return;
         }
         BorrowTools borrowtools = new BorrowTools();
-        String idbook = carJtable.getValueAt(row, 0).toString();
-        int i = borrowtools.ReturnCar(idbook);
+        String idcar = carJtable.getValueAt(row, 0).toString();
+        int i = borrowtools.ReturnCar(idcar);
         if (i == 1) {
             JOptionPane.showMessageDialog(this, "还车成功", "", JOptionPane.WARNING_MESSAGE);
             show_data();

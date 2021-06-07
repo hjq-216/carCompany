@@ -44,6 +44,18 @@ public class Login_CustomerFrame extends JFrame {
         borrow_Button.setBounds(77, 288, 123, 29);
         contentPane.add(borrow_Button);
 
+        JButton history_Button = new JButton("租借历史");
+        history_Button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                History_CustomerFrame history_customerFrame = new History_CustomerFrame();
+                history_customerFrame.setVisible(true);
+                CloseFrame();
+            }
+        });
+        history_Button.setBounds(77,380,123,29);
+        contentPane.add(history_Button);
+
         JButton self_info_Button = new JButton("还车");
         self_info_Button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
