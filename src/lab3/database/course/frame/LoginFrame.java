@@ -113,7 +113,7 @@ public class LoginFrame extends JFrame implements ItemListener {
         });
         contentPane.add(view_Password_Button);
 
-        JLabel background1 = new JLabel(new ImageIcon("image/login2.jpg"));
+        JLabel background1 = new JLabel(new ImageIcon("image/login3.jpg"));
         background1.setBounds(0, 0, 383, 520);
         contentPane.add(background1);
     }
